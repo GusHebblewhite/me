@@ -60,6 +60,10 @@ class Agent {
 
 function sketch(context, width, height) {
 
+  //Resize canvas
+  document.getElementById('top-canvas').height = window.innerHeight * 0.99;
+  document.getElementById('top-canvas').width = window.innerWidth * 0.99;
+
   //This is the part that gets looped
   context.fillStyle = "white";
   context.fillRect(0, 0, width, height);
@@ -111,7 +115,7 @@ const maxLineDist = 300;
 const width = canvas.clientWidth;
 const height = canvas.clientHeight;
 
-console.log(width, height);
+
 
 //Create agents
 for (i = 0; i < nAgents; i++) {
