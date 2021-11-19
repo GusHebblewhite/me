@@ -1,6 +1,9 @@
 const canvas = document.getElementById("top-canvas");
 const ctx = canvas.getContext("2d");
 
+// #######################################################################
+// ## Helper Functions
+// #######################################################################
 function distEuclid(agent, other) {
   return (
     ((agent.pos.x - other.pos.x) ** 2 + (agent.pos.y - other.pos.y) ** 2) **
@@ -18,11 +21,26 @@ function randomRangeFloor(start, end) {
   return Math.floor(start + Math.random() * (end - start));
 }
 
+// #######################################################################
+// ## Classes
+// #######################################################################
 class Vector {
-  constructor(x, y, radius) {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
   }
+
+  getMagnitude() {
+    /* Gets the magnitude of the Vector object */
+    return (this.x**2 + this.y**2)**(1/2)
+  }
+
+  normalise(target = 1){
+    let magnitude = this.getMagnitude()
+    this.x *= target/magnitude
+    this.y *= target/magnitude
+  }
+
 }
 
 class Agent {
@@ -31,9 +49,37 @@ class Agent {
     this.vel = new Vector(randomRange(-1, 1), randomRange(-1, 1));
     this.radius = radius;
     this.lineWidth = lineWidth;
+    //Vel magnitude that the agent will tend to come back to
+    this.baseVelMag = this.vel.getMagnitude()
   }
-  update(width, height) {
-    /* Update the circle position based on the velocity */
+  update(width, height, mousePos, behaviour="none") {
+    /* 
+      Update the circle position based on the velocity
+      Expects behavior in ["none", "target"] 
+    */
+
+    const gravConst = 4*10e-5;
+    const frictConst = 0.9999;
+
+    //Friction
+    if (this.vel.getMagnitude() > this.baseVelMag){
+      this.vel.x *= frictConst;
+      this.vel.y *= frictConst;
+    }
+
+
+    if (behaviour === "target") {
+      // move balls marginally towards cursor
+      let velToCursor = new Vector(
+        mousePos.x - this.pos.x, 
+        mousePos.y - this.pos.y)
+      //Gravity
+      let velToCursorNorm = velToCursor
+      velToCursorNorm.normalise()
+      this.vel.x += gravConst * this.radius / Math.max(velToCursor.getMagnitude()**2, 10e-6) * velToCursorNorm.x
+      this.vel.y += gravConst * this.radius / Math.max(velToCursor.getMagnitude()**2, 10e-6) * velToCursorNorm.y
+
+    }
 
     this.pos.x += this.vel.x;
     this.pos.y += this.vel.y;
@@ -49,14 +95,39 @@ class Agent {
 
   draw(context) {
     /* Draw the circle on the given context */
-
+    context.save();
     context.beginPath();
     context.arc(this.pos.x, this.pos.y, this.radius, 0, Math.PI * 2);
     context.lineWidth = this.lineWidth;
     context.fill();
     context.stroke();
+    context.restore();
   }
 }
+
+// #######################################################################
+// ## Events
+// #######################################################################
+
+//Listener to check mouse is on canvas
+let mouseOnCanvas = false;
+document.querySelector('body').addEventListener('mouseleave', e => {
+  mouseOnCanvas = false;
+})
+document.querySelector('body').addEventListener('mouseenter', e => {
+  mouseOnCanvas = true;
+})
+
+//Listener to get mouse position on movement
+let mousePosition = new Vector(0,0)
+window.addEventListener('mousemove', e => {
+  mousePosition.x = e.clientX;
+  mousePosition.y = e.clientY;
+})
+
+// #######################################################################
+// ## Sketch Function
+// #######################################################################
 
 function sketch(context, width, height) {
 
@@ -70,7 +141,7 @@ function sketch(context, width, height) {
   context.strokeStyle = "#DCDCDC"
 
   agents.forEach((agent) => {
-    agent.update(width, height);
+    agent.update(width, height, mousePosition, mouseOnCanvas ? "target" : "none");
   });
 
   //draw lines between agents
@@ -78,6 +149,8 @@ function sketch(context, width, height) {
     const agent = agents[i];
     for (let j = i + 1; j < agents.length; j++) {
       const other = agents[j];
+
+      context.save()
 
       //Make sure close (Euclidean distance)
       const dist = distEuclid(agent, other);
@@ -93,19 +166,32 @@ function sketch(context, width, height) {
       context.beginPath();
       context.moveTo(agent.pos.x, agent.pos.y);
       context.lineTo(other.pos.x, other.pos.y);
-      context.lin
       context.stroke();
+
+      context.restore()
     }
   }
 
+  //Draw dot at cursor
+  if (mouseOnCanvas === true) {
+    context.save();
+    context.beginPath();
+    context.arc(mousePosition.x, mousePosition.y, 10, 0, 2 * Math.PI);
+    context.lineWidth = 3;
+    context.strokeStyle = "black";
+    context.stroke();
+    context.restore();
+  }
+
+  //Draw Agents
   agents.forEach((agent) => {
     agent.draw(context);
   });
 
 }
-
-// Run animation (fingers crossed!)
-
+// #######################################################################
+// ## Setup
+// #######################################################################
 //Create agents
 let agents = [];
 
@@ -114,8 +200,6 @@ const nAgents = 40;
 const maxLineDist = 300;
 const width = canvas.clientWidth;
 const height = canvas.clientHeight;
-
-
 
 //Create agents
 for (i = 0; i < nAgents; i++) {
@@ -128,6 +212,9 @@ for (i = 0; i < nAgents; i++) {
     )
   );
 }
+// #######################################################################
+// ## Animate
+// #######################################################################
 
 const animate = () => {
   requestAnimationFrame(animate);
