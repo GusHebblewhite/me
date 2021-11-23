@@ -131,12 +131,12 @@ window.addEventListener('mousemove', e => {
 function sketch(context) {
 
   //try everiding height and width
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const width = window.innerWidth * 0.99;
+  const height = window.innerHeight * 0.99;
 
   //Resize canvas
-  document.getElementById('top-canvas').height = window.innerHeight * 0.99;
-  document.getElementById('top-canvas').width = window.innerWidth * 0.99;
+  document.getElementById('top-canvas').height = height;
+  document.getElementById('top-canvas').width = width;
 
   //This is the part that gets looped
   context.fillStyle = "white";
@@ -204,8 +204,10 @@ let agents = [];
 //Params
 const nAgents = 20;
 const maxLineDist = 300;
-const width = canvas.clientWidth //* 0.9;
-const height = canvas.clientHeight //* 0.75;
+const width = window.innerWidth * 0.99;
+const height = window.innerHeight * 0.99;
+
+console.log(width, height);
 
 //Create agents
 for (i = 0; i < nAgents; i++) {
@@ -224,6 +226,6 @@ for (i = 0; i < nAgents; i++) {
 
 const animate = () => {
   requestAnimationFrame(animate);
-  sketch(ctx, width, height);
+  sketch(ctx);
 };
 animate();
