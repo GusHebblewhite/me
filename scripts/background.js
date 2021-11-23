@@ -175,21 +175,24 @@ function sketch(context) {
     }
   }
 
+  //Draw Agents
+  agents.forEach((agent) => {
+    agent.draw(context);
+  });  
+
   //Draw dot at cursor
   if (mouseOnCanvas === true) {
     context.save();
     context.beginPath();
     context.arc(mousePosition.x, mousePosition.y, 10, 0, 2 * Math.PI);
     context.lineWidth = 3;
+    context.fillStyle = "white";
+    context.fill();
     context.strokeStyle = "black";
     context.stroke();
     context.restore();
   }
 
-  //Draw Agents
-  agents.forEach((agent) => {
-    agent.draw(context);
-  });
 
 }
 // #######################################################################
