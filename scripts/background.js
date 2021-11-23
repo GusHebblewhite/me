@@ -59,14 +59,7 @@ class Agent {
     */
 
     const gravConst = 4*10e-5;
-    const frictConst = 0.9999;
-
-    //Friction
-    if (this.vel.getMagnitude() > this.baseVelMag){
-      this.vel.x *= frictConst;
-      this.vel.y *= frictConst;
-    }
-
+    const frictConst = 0.999;
 
     if (behaviour === "target") {
       // move balls marginally towards cursor
@@ -79,6 +72,12 @@ class Agent {
       this.vel.x += gravConst * this.radius / Math.max(velToCursor.getMagnitude()**2, 10e-6) * velToCursorNorm.x
       this.vel.y += gravConst * this.radius / Math.max(velToCursor.getMagnitude()**2, 10e-6) * velToCursorNorm.y
 
+    } else {
+        //Friction
+      if (this.vel.getMagnitude() > this.baseVelMag){
+        this.vel.x *= frictConst;
+        this.vel.y *= frictConst;
+      }
     }
 
     this.pos.x += this.vel.x;
@@ -196,7 +195,7 @@ function sketch(context, width, height) {
 let agents = [];
 
 //Params
-const nAgents = 40;
+const nAgents = 20;
 const maxLineDist = 300;
 const width = canvas.clientWidth;
 const height = canvas.clientHeight;
