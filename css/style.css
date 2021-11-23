@@ -3,6 +3,12 @@ body {
     cursor: none;
 }
 
+#top-canvas {
+    margin: 0;
+    overflow: hidden;
+
+}
+
 .about {
     display: inline-block;
 }

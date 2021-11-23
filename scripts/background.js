@@ -128,7 +128,11 @@ window.addEventListener('mousemove', e => {
 // ## Sketch Function
 // #######################################################################
 
-function sketch(context, width, height) {
+function sketch(context) {
+
+  //try everiding height and width
+  const width = window.innerWidth;
+  const height = window.innerHeight;
 
   //Resize canvas
   document.getElementById('top-canvas').height = window.innerHeight * 0.99;
@@ -197,8 +201,8 @@ let agents = [];
 //Params
 const nAgents = 20;
 const maxLineDist = 300;
-const width = canvas.clientWidth;
-const height = canvas.clientHeight;
+const width = canvas.clientWidth //* 0.9;
+const height = canvas.clientHeight //* 0.75;
 
 //Create agents
 for (i = 0; i < nAgents; i++) {
