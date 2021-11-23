@@ -4,22 +4,31 @@ body {
 }
 
 #top-canvas {
+    position: absolute;
+    left: 0;
     margin: 0;
     overflow: hidden;
-
+    z-index: 1000;
+    pointer-events:none;
 }
 
 .about {
     display: inline-block;
 }
 
+.background {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
 .title {
     font-family: monospace;
-    font-size: 2rem;
+    text-align: center;
     position: absolute;
     top: 200px;
+    font-size: 2rem;
     width: 100%;
-    text-align: center;
 }
 
 .link {
@@ -30,3 +39,4 @@ body {
 
 .link:visited {
     color: black;
+}

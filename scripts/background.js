@@ -140,7 +140,7 @@ function sketch(context) {
 
   //This is the part that gets looped
   context.fillStyle = "white";
-  context.fillRect(0, 0, width, height);
+  //context.fillRect(0, 0, width, height);
   context.strokeStyle = "#DCDCDC"
 
   agents.forEach((agent) => {
